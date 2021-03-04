@@ -6,7 +6,6 @@ void setup()
   double p_ave1, p_ave2;
   double t_ave1, t_ave2;
   double h_old, h_new;
-  int i;
 }
 
 void loop()
@@ -20,8 +19,17 @@ void loop()
    
     h_old = (pow(1013.25/p_ave1, 1/5.257) - 1)*(t_ave1+273.15) / 0.0065;
     h_new = (pow(1013.25/p_ave2, 1/5.257) - 1)*(t_ave2+273.15) / 0.0065;
-    
-    if(h_old > h_new){
+
+    if(p_ave1 < p_ave2){
+      printf("p_ave2 higher\n");
+    }
+    else if(p_ave1 > p_ave2){
+      printf("p_ave2 lower\n");
+    }
+    else if(h_old < h_new){
+      printf("h_new higher\n");
+    }
+    else{
       printf("h_new lower\n");
     }
  }

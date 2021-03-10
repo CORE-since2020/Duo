@@ -27,13 +27,39 @@ unsigned int i=0;
 int32_t t_fine;
 int32_t adc_P, adc_T;
 
-volatile int timeCounter1;
-hw_timer_t *timer1 = NULL; 
+// Timer Interrupt setting
+hw_timer_t * timer = NULL;
+volatile SemaphoreHandle_t timerSemaphore;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
+
+void IRAM_ATTR onTimer(){
+  //ここにタイマー割り込みで実行するコードを記載
+  portEXIT_CRITICAL_ISR(&timerMux);
+  
+  // Give a semaphore that we can check in the loop
+  xSemaphoreGiveFromISR(timerSemaphore, NULL);
+}
 
 
 void setup()
 {
+  // Create semaphore to inform us when the timer has fired
+  timerSemaphore = xSemaphoreCreateBinary();
+
+  // Use 1st timer of 4 (counted from zero).
+  // Set 80 divider for prescaler (see ESP32 Technical Reference Manual for more info).
+  timer = timerBegin(0, 80, true);
+
+  // Attach onTimer function to our timer.
+  timerAttachInterrupt(timer, &onTimer, true);
+
+  // Set alarm to call onTimer function every 0.005second (value in microseconds).
+  // Repeat the alarm (third parameter)
+  timerAlarmWrite(timer, 5000, true);
+
+  // Start an alarm
+  timerAlarmEnable(timer);
+  
   //シリアル通信初期化
   Serial.begin(115200);//シリアル通信を9600bpsで初期化
 

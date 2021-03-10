@@ -61,7 +61,7 @@ void setup()
   timerAlarmEnable(timer);
   
   //シリアル通信初期化
-  Serial.begin(115200);//シリアル通信を9600bpsで初期化
+  Serial.begin(115200);//シリアル通信を115200bpsで初期化
 
   //I2C初期化
   Wire.begin();//I2Cを初期化

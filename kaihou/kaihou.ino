@@ -157,8 +157,6 @@ void loop()
  
   pres = (float)pres_cal / 100.0;//気圧データを実際の値に計算
   temp = (float)temp_cal / 100.0;//温度データを実際の値に計算
-  
-  delay(1000);//1000msec待機(1秒待機)
 
   p[i] = pres
   t[i] = temp;

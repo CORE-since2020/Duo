@@ -114,6 +114,14 @@ void setup()
   }
   delay(1000);//1000msec待機(1秒待機)
 
+
+  //BME280測定条件設定(1回測定後、スリープモード)
+  Wire.beginTransmission(BME280_ADDR);//I2Cスレーブ「Arduino Uno」のデータ送信開始
+  Wire.write(CTRL_MEAS);//測定条件設定
+  Wire.write(0x25);//「温度・気圧オーバーサンプリングx1」、「1回測定後、スリープモード」
+  Wire.endTransmission();//I2Cスレーブ「Arduino Uno」のデータ送信終了
+  delay(10);//10msec待機
+
   
   float p[]; //気圧センサから取得した気圧値を格納する
   float t[]; //温度値を格納する
@@ -130,14 +138,6 @@ void loop()
 
   while(i<10)
  {
-
-  //BME280測定条件設定(1回測定後、スリープモード)
-  Wire.beginTransmission(BME280_ADDR);//I2Cスレーブ「Arduino Uno」のデータ送信開始
-  Wire.write(CTRL_MEAS);//測定条件設定
-  Wire.write(0x25);//「温度・気圧オーバーサンプリングx1」、「1回測定後、スリープモード」
-  Wire.endTransmission();//I2Cスレーブ「Arduino Uno」のデータ送信終了
-  delay(10);//10msec待機
-
   //測定データ取得
   Wire.beginTransmission(BME280_ADDR);//I2Cスレーブ「Arduino Uno」のデータ送信開始
   Wire.write(0xF7);//出力データバイトを「気圧データ」のアドレスに指定

@@ -27,6 +27,11 @@ unsigned int i=0;
 int32_t t_fine;
 int32_t adc_P, adc_T;
 
+volatile int timeCounter1;
+hw_timer_t *timer1 = NULL; 
+portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
+
+
 void setup()
 {
   //シリアル通信初期化

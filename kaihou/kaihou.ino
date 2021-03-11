@@ -125,9 +125,9 @@ void setup()
   
   float p[]; //気圧センサから取得した気圧値を格納する
   float t[]; //温度値を格納する
-  float p_ave1, p_ave2;
-  float t_ave1, t_ave2;
-  float h_old, h_new;
+  float p_ave1, p_ave2, p_ave3;
+  float t_ave1, t_ave2, p_ave3;
+  float h_old, h_new, h_max, H;
 }
 
 void loop()
@@ -136,7 +136,7 @@ void loop()
   uint32_t pres_cal;
   float temp, pres;
 
-  while(i<10)
+  while(i<100)
  {
   //測定データ取得
   Wire.beginTransmission(BME280_ADDR);//I2Cスレーブ「Arduino Uno」のデータ送信開始
@@ -174,9 +174,47 @@ void loop()
        Serial.println(h_new higher);
     }
     else{
+       h_old = h_max;
        Serial.println(h_new lower);
-       i++
+       break;
     }
+    i++;
+ }
+
+  while(i<100)
+ {
+  //測定データ取得
+  Wire.beginTransmission(BME280_ADDR);//I2Cスレーブ「Arduino Uno」のデータ送信開始
+  Wire.write(0xF7);//出力データバイトを「気圧データ」のアドレスに指定
+  Wire.endTransmission();//I2Cスレーブ「Arduino Uno」のデータ送信終了
+  
+  Wire.requestFrom(BME280_ADDR, 8);//I2Cデバイス「BME280」に8Byteのデータ要求
+  for (i=0; i<8; i++){
+    while (Wire.available() == 0 ){}
+    dac[i] = Wire.read();//dacにI2Cデバイス「BME280」のデータ読み込み
+  }
+  
+  adc_P = ((uint32_t)dac[0] << 12) | ((uint32_t)dac[1] << 4) | ((dac[2] >> 4) & 0x0F);
+  adc_T = ((uint32_t)dac[3] << 12) | ((uint32_t)dac[4] << 4) | ((dac[5] >> 4) & 0x0F);
+  
+  pres_cal = BME280_compensate_P_int32(adc_P);//気圧データ補正計算
+  temp_cal = BME280_compensate_T_int32(adc_T);//温度データ補正計算
+ 
+  pres = (float)pres_cal / 100.0;//気圧データを実際の値に計算
+  temp = (float)temp_cal / 100.0;//温度データを実際の値に計算
+
+  p[i] = pres
+  t[i] = temp;
+
+  p_ave3 = (p[i]+p[i+1]+p[i+2]+p[i+3]+p[i+4]) / 5;  
+  t_ave3 = (t[i]+t[i+1]+t[i+2]+t[i+3]+t[i+4]) / 5;
+  H = (pow(1013.25/p_ave3, 1/5.257) - 1)*(t_ave3+273.15) / 0.0065;
+
+  if(h_max > H){
+    Serial.println(H lower);
+    i++;
+  }
+  
  }
  
 }

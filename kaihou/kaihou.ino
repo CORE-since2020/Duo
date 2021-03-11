@@ -64,7 +64,7 @@ void setup()
   Serial.begin(115200);//シリアル通信を115200bpsで初期化
 
   //I2C初期化
-  Wire.begin();//I2Cを初期化
+  Wire.begin(21,22);//I2Cを初期化
 
   //BME280動作設定
   Wire.beginTransmission(BME280_ADDR);//I2Cスレーブ「Arduino Uno」のデータ送信開始

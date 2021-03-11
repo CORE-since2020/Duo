@@ -27,39 +27,24 @@ unsigned int i=0;
 int32_t t_fine;
 int32_t adc_P, adc_T;
 
-// Timer Interrupt setting
-hw_timer_t * timer = NULL;
-volatile SemaphoreHandle_t timerSemaphore;
+volatile int timeCounter1;
+hw_timer_t *timer1 = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 
-void IRAM_ATTR onTimer(){
-  //ここにタイマー割り込みで実行するコードを記載
-  portEXIT_CRITICAL_ISR(&timerMux);
-  
-  // Give a semaphore that we can check in the loop
-  xSemaphoreGiveFromISR(timerSemaphore, NULL);
-}
 
+void IRAM_ATTR onTimer1(){
+  portENTER_CRITICAL_ISR(&timerMux);
+  timeCounter1++;
+  portEXIT_CRITICAL_ISR(&timerMux);
+}
 
 void setup()
 {
-  // Create semaphore to inform us when the timer has fired
-  timerSemaphore = xSemaphoreCreateBinary();
+  timer1 = timerBegin(0, 80, true);
+  timerAttachInterrupt(timer1, &onTimer1, true);
+  timerAlarmWrite(timer1, 1.0E6 / standby_rate, true);
+  timerAlarmEnable(timer1);  
 
-  // Use 1st timer of 4 (counted from zero).
-  // Set 80 divider for prescaler (see ESP32 Technical Reference Manual for more info).
-  timer = timerBegin(0, 80, true);
-
-  // Attach onTimer function to our timer.
-  timerAttachInterrupt(timer, &onTimer, true);
-
-  // Set alarm to call onTimer function every 0.005second (value in microseconds).
-  // Repeat the alarm (third parameter)
-  timerAlarmWrite(timer, 5000, true);
-
-  // Start an alarm
-  timerAlarmEnable(timer);
-  
   //シリアル通信初期化
   Serial.begin(115200);//シリアル通信を115200bpsで初期化
 
@@ -135,7 +120,11 @@ void loop()
   int32_t  temp_cal;
   uint32_t pres_cal;
   float temp, pres;
-
+  if(timeCounter1 > 0){
+        portENTER_CRITICAL(&timerMux);
+        timeCounter1--;
+        portEXIT_CRITICAL(&timerMux);
+        /*これ以下に割込みで処理するコードを書く*/
   while(i<100)
  {
   //測定データ取得
@@ -215,8 +204,8 @@ void loop()
     i++;
   }
   
+  }
  }
- 
 }
 
  //温度補正 関数

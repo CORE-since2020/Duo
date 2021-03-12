@@ -42,7 +42,7 @@ void setup()
 {
   timer1 = timerBegin(0, 80, true);
   timerAttachInterrupt(timer1, &onTimer1, true);
-  timerAlarmWrite(timer1, 1.0E6 / standby_rate, true);
+  timerAlarmWrite(timer1, 5000, true);
   timerAlarmEnable(timer1);  
 
   //シリアル通信初期化

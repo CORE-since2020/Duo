@@ -108,8 +108,8 @@ void setup()
   delay(10);//10msec待機
 
   
-  float p[]; //気圧センサから取得した気圧値を格納する
-  float t[]; //温度値を格納する
+  float p[100]; //気圧センサから取得した気圧値を格納する
+  float t[100]; //温度値を格納する
   float p_ave1, p_ave2, p_ave3;
   float t_ave1, t_ave2, p_ave3;
   float h_old, h_new, h_max, H;

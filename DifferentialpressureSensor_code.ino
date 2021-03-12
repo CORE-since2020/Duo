@@ -12,7 +12,7 @@ void setup() {
         if(SD.begin(5)){
                 myFile = SD.open("/test.bin", FILE_APPEND);
                 myFile.println("START RECORD",BIN);
-                myFile.println("No,SensorValue",)BIN;
+                myFile.println("No,SensorValue",BIN);
                 myFile.close();
                 Serial.println("setup Done");
          }else{

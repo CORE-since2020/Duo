@@ -10,9 +10,9 @@ void setup() {
   Serial.begin(115200);
   while (!SD.begin(5)) {
         if(SD.begin(5)){
-                myFile = SD.open("/test.txt", FILE_APPEND);
-                myFile.println("START RECORD");
-                myFile.println("No,SensorValue");
+                myFile = SD.open("/test.bin", FILE_APPEND);
+                myFile.println("START RECORD",BIN);
+                myFile.println("No,SensorValue",)BIN;
                 myFile.close();
                 Serial.println("setup Done");
          }else{
@@ -22,11 +22,11 @@ void setup() {
 }
 
 void loop() {
-  myFile = SD.open("/test.txt", FILE_APPEND);
+  myFile = SD.open("/test.bin", FILE_APPEND);
   sensorValue = analogRead(sensorPin);
-  myFile.print( n );
-  myFile.print(",");
-  myFile.println(sensorValue);
+  myFile.print(n,BIN);
+  myFile.print(",",BIN);
+  myFile.println(sensorValue,BIN);
   myFile.close();
   Serial.print("Done");
   Serial.println(n);

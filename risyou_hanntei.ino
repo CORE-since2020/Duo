@@ -129,7 +129,7 @@ void loop() {
   Serial.print("\t");
   
   //移動平均をとる
-  asqrt[0] = sqrt(pow(accel_t_gyro.value.x_accel, 2)+pow(accel_t_gyro.value.y_accel, 2)+pow(accel_t_gyro.value.z_accel, 2)) / arange;
+  asqrt[0] = sqrt(pow(ax, 2)+pow(ay, 2)+pow(az, 2));
 
   float aave = (asqrt[0]+asqrt[1]+asqrt[2]+asqrt[3]+asqrt[4]) / 5;
 

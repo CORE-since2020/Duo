@@ -131,13 +131,13 @@ void loop() {
       for(ai = 0; ai < 5; ai++){
     asqrt_old[ai] = asqrt_new[ai];
       }
-      for(ai = 0; ai < 5; ai++){
-    asqrt_new[ai+1] = asqrt_old[ai];
-  }
   asqrt_new[0] = sqrt(pow(accel_t_gyro.value.x_accel, 2)+pow(accel_t_gyro.value.y_accel, 2)+pow(accel_t_gyro.value.z_accel, 2)) / arange; //３軸合成加速度
   float aave = (asqrt_new[0]+asqrt_new[1]+asqrt_new[2]+asqrt_new[3]+asqrt_new[4]) / 5;
   Serial.print(aave, 2);
   Serial.println("");
+      for(ai = 0; ai < 5; ai++){
+    asqrt_new[ai+1] = asqrt_old[ai];
+  }  
 
   //連続回数を調べる
   if(aave > A_FLIGHT){

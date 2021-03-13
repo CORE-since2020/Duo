@@ -162,16 +162,16 @@ void loop()
               i = number;
               break;
             }
-          
          }
          i++;
        }
-       while(number<j && j<1100){
-         if(h_max>h[j]){
-          Serial.println(lower);
-               if((j-number+1)=100){
-                  Serial.println(Done);
-                  break;
+       
+       while(number < j && j < 1100){
+         if(h_max > h[j]){
+            Serial.println(lower);
+               if( (j-number+1) = 100 ){
+                    Serial.println(Done);
+                    break;
                }
                i++;
          }

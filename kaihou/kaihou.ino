@@ -108,6 +108,10 @@ void setup()
   Wire.write(0x25);//「温度・気圧オーバーサンプリングx1」、「1回測定後、スリープモード」
   Wire.endTransmission();//I2Cスレーブ「Arduino Uno」のデータ送信終了
   delay(10);//10msec待機
+
+  float p[1100], t[1100], h[1100];
+  float p_ave, t_ave, h, h_max, number, j;
+  
 }
 
 void loop()

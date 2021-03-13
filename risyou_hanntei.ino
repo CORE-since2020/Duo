@@ -13,6 +13,9 @@ const int SAMPLING_RATE = 200; //MPU6050のサンプリングレートは200Hz
 
 int ai; //移動平均カウントのための変数
 int acnt = 0; //連続回数カウントのための変数
+float asqrt[5]; //移動平均
+float _asqrt[5];
+
 
 // 構造体定義
 typedef union accel_t_gyro_union {
@@ -126,18 +129,18 @@ void loop() {
   Serial.print("\t");
   
   //移動平均をとる
-  float asqrt_old[5];
-  float asqrt_new[5];
-      for(ai = 0; ai < 5; ai++){
-    asqrt_old[ai] = asqrt_new[ai];
-      }
-  asqrt_new[0] = sqrt(pow(accel_t_gyro.value.x_accel, 2)+pow(accel_t_gyro.value.y_accel, 2)+pow(accel_t_gyro.value.z_accel, 2)) / arange; //３軸合成加速度
-  float aave = (asqrt_new[0]+asqrt_new[1]+asqrt_new[2]+asqrt_new[3]+asqrt_new[4]) / 5;
+  asqrt[0] = sqrt(pow(accel_t_gyro.value.x_accel, 2)+pow(accel_t_gyro.value.y_accel, 2)+pow(accel_t_gyro.value.z_accel, 2)) / arange;
+
+  float aave = (asqrt[0]+asqrt[1]+asqrt[2]+asqrt[3]+asqrt[4]) / 5;
+
+for(ai = 0; ai < 5; ai++){
+  _asqrt[ai] = asqrt[ai] ;
+}
+for(ai = 1; ai < 5; ai++){
+  asqrt[ai] = _asqrt[ai-1] ;
+}
   Serial.print(aave, 2);
   Serial.println("");
-      for(ai = 0; ai < 5; ai++){
-    asqrt_new[ai+1] = asqrt_old[ai];
-  }  
 
   //連続回数を調べる
   if(aave > A_FLIGHT){

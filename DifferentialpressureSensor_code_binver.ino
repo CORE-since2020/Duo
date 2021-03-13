@@ -48,7 +48,7 @@ void loop() {
 
     sensorValue = analogRead(sensorPin);
 
-    byte buf[1];
+    byte buf[2];
     casttobyte(sensorValue,buf);
     myFile.write(buf,sizeof(buf));
 

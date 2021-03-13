@@ -5,6 +5,8 @@
 #define CONFIG 0xF5
 #define CTRL_MEAS 0xF4
 
+#define standby_rate 5000
+
 //気温補正データ
 uint16_t dig_T1;
 int16_t  dig_T2;
@@ -42,7 +44,7 @@ void setup()
 {
   timer1 = timerBegin(0, 80, true);
   timerAttachInterrupt(timer1, &onTimer1, true);
-  timerAlarmWrite(timer1, 5000, true);
+  timerAlarmWrite(timer1, standby_rate, true);
   timerAlarmEnable(timer1);  
 
   //シリアル通信初期化
@@ -106,13 +108,6 @@ void setup()
   Wire.write(0x25);//「温度・気圧オーバーサンプリングx1」、「1回測定後、スリープモード」
   Wire.endTransmission();//I2Cスレーブ「Arduino Uno」のデータ送信終了
   delay(10);//10msec待機
-
-  
-  float p[250]; //気圧センサから取得した気圧値を格納する
-  float t[250]; //温度値を格納する
-  float p_ave1, p_ave2, p_ave3;
-  float t_ave1, t_ave2, p_ave3;
-  float h_old, h_new, h_max, H;
 }
 
 void loop()
@@ -125,7 +120,7 @@ void loop()
         timeCounter1--;
         portEXIT_CRITICAL(&timerMux);
         /*これ以下に割込みで処理するコードを書く*/
-        while(i<100)
+        while(i<1000)
        {
          //測定データ取得
          Wire.beginTransmission(BME280_ADDR);//I2Cスレーブ「Arduino Uno」のデータ送信開始
@@ -150,66 +145,37 @@ void loop()
          p[i] = pres
          t[i] = temp;
 
-         p_ave1 = (p[i]+p[i+1]+p[i+2]+p[i+3]+p[i+4]) / 5;
-         p_ave2 = (p[i+1]+p[i+2]+p[i+3]+p[i+4]+p[i+5])/ 5;
-    
-         t_ave1 = (t[i]+t[i+1]+t[i+2]+t[i+3]+t[i+4]) / 5;
-         t_ave2 = (t[i+1]+t[i+2]+t[i+3]+t[i+4]+t[i+5])/ 5;
-   
-         h_old = (pow(1013.25/p_ave1, 1/5.257) - 1)*(t_ave1+273.15) / 0.0065;
-         h_new = (pow(1013.25/p_ave2, 1/5.257) - 1)*(t_ave2+273.15) / 0.0065;
-
-         if(h_old < h_new){
-            Serial.println(h_new higher);
-         }
-         else{
-            h_old = h_max;
-            Serial.println(h_new lower);
-            i = j;
-            break;
-         }
-            i++;
-       }
-       while(j < i < 250){
-        //測定データ取得
-         Wire.beginTransmission(BME280_ADDR);//I2Cスレーブ「Arduino Uno」のデータ送信開始
-         Wire.write(0xF7);//出力データバイトを「気圧データ」のアドレスに指定
-         Wire.endTransmission();//I2Cスレーブ「Arduino Uno」のデータ送信終了
-  
-         Wire.requestFrom(BME280_ADDR, 8);//I2Cデバイス「BME280」に8Byteのデータ要求
-         for (i=0; i<8; i++){
-             while (Wire.available() == 0 ){}
-             dac[i] = Wire.read();//dacにI2Cデバイス「BME280」のデータ読み込み
-         }
-  
-         adc_P = ((uint32_t)dac[0] << 12) | ((uint32_t)dac[1] << 4) | ((dac[2] >> 4) & 0x0F);
-         adc_T = ((uint32_t)dac[3] << 12) | ((uint32_t)dac[4] << 4) | ((dac[5] >> 4) & 0x0F);
-  
-         pres_cal = BME280_compensate_P_int32(adc_P);//気圧データ補正計算
-         temp_cal = BME280_compensate_T_int32(adc_T);//温度データ補正計算
- 
-         pres = (float)pres_cal / 100.0;//気圧データを実際の値に計算
-         temp = (float)temp_cal / 100.0;//温度データを実際の値に計算
-
-         p[i] = pres
-         t[i] = temp;
-
-         p_ave3 = (p[i]+p[i+1]+p[i+2]+p[i+3]+p[i+4]) / 5;
-         t_ave3 = (t[i]+t[i+1]+t[i+2]+t[i+3]+t[i+4]) / 5;
-         H = (pow(1013.25/p_ave3, 1/5.257) - 1)*(t_ave3+273.15) / 0.0065;
-        
-         if(H < h_max){
-          Serial.println(H lower);
-          if(i>200){
-            break;
-          }
+         if(i>=5){
+            p_ave = (p[i-4]+p[i-3]+p[i-2]+p[i-1]+p[i])/5;
+            t_ave = (t[i-4]+t[i-3]+t[i-2]+t[i-1]+t[i])/5;
+            h[i] = (pow(1013.25/p_ave, 1/5.257) - 1)*(t_ave+273.15) / 0.0065;
+            if(h[i]<h[i+1]){
+              Serial.println(higher);
+            }
+            else{
+              Serial.println(lower);
+              h[i] = h_max;
+              i = number;
+              break;
+            }
+          
          }
          i++;
        }
-
- }
+       while(number<j && j<1100){
+         if(h_max>h[j]){
+          Serial.println(lower);
+               if((j-number+1)=100){
+                  Serial.println(Done);
+                  break;
+               }
+               i++;
+         }
+       }
+  }
 }
 
+         
  //温度補正 関数
 int32_t BME280_compensate_T_int32(int32_t adc_T)
 {

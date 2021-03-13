@@ -106,9 +106,10 @@ void loop() {
   SWAP (accel_t_gyro.reg.z_gyro_h, accel_t_gyro.reg.z_gyro_l);
       
   const int arange = 4096;
+  const float gosa = 0.175;
   float ax = accel_t_gyro.value.x_accel / arange; //FS_SEL_2
   float ay = accel_t_gyro.value.y_accel / arange;
-  float az = accel_t_gyro.value.z_accel / arange;
+  float az = accel_t_gyro.value.z_accel / arange + gosa;
   Serial.print(ax, 2);
   Serial.print("\t");
   Serial.print(ay, 2);

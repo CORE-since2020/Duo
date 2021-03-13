@@ -115,23 +115,27 @@ void loop() {
       
   // 取得した角速度値を分解能で割って角速度(degrees per sec)に変換する
   const int grange = 16.4;
-  float gyro_x = accel_t_gyro.value.x_gyro / grange;//FS_SEL_3
-  float gyro_y = accel_t_gyro.value.y_gyro / grange;
-  float gyro_z = accel_t_gyro.value.z_gyro / grange;
-  Serial.print(gyro_x, 2);
+  float gx = accel_t_gyro.value.x_gyro / grange;//FS_SEL_3
+  float gy = accel_t_gyro.value.y_gyro / grange;
+  float gz = accel_t_gyro.value.z_gyro / grange;
+  Serial.print(gx, 2);
   Serial.print("\t");
-  Serial.print(gyro_y, 2);
+  Serial.print(gy, 2);
   Serial.print("\t");
-  Serial.print(gyro_z, 2);
+  Serial.print(gz, 2);
   Serial.print("\t");
   
   //移動平均をとる
-  float asqrt[6];
+  float asqrt_old[5];
+  float asqrt_new[5];
       for(ai = 0; ai < 5; ai++){
-    asqrt[ai+1] = asqrt[ai];
+    asqrt_old[ai] = asqrt_new[ai];
+      }
+      for(ai = 0; ai < 5; ai++){
+    asqrt_new[ai+1] = asqrt_old[ai];
   }
-  asqrt[0] = sqrt(pow(accel_t_gyro.value.x_accel, 2)+pow(accel_t_gyro.value.y_accel, 2)+pow(accel_t_gyro.value.z_accel, 2)) / arange; //３軸合成加速度
-  float aave = (asqrt[0]+asqrt[1]+asqrt[2]+asqrt[3]+asqrt[4]) / 5;
+  asqrt_new[0] = sqrt(pow(accel_t_gyro.value.x_accel, 2)+pow(accel_t_gyro.value.y_accel, 2)+pow(accel_t_gyro.value.z_accel, 2)) / arange; //３軸合成加速度
+  float aave = (asqrt_new[0]+asqrt_new[1]+asqrt_new[2]+asqrt_new[3]+asqrt_new[4]) / 5;
   Serial.print(aave, 2);
   Serial.println("");
 

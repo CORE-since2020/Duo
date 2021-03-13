@@ -6,7 +6,7 @@ int sensorPin = A0;
 int sensorValue = 0;
 int n = 1;
 int count;
-int SAMPLING_RATE = 200;
+int SAMPLING_RATE = 50;
 const char* file_name = "/test.csv";
 File myFile;
 
@@ -26,23 +26,23 @@ void IRAM_ATTR onTimer1(){
 
 void setup() {
 
+			SD.begin(5);
+
 			timer1 = timerBegin(0, 80, true);
       timerAttachInterrupt(timer1, &onTimer1, true);
       timerAlarmWrite(timer1, 1.0E6 / SAMPLING_RATE, true);
       timerAlarmEnable(timer1);
 
-  	Serial.begin(115200);
+  		Serial.begin(115200);
+
+			myFile = SD.open(file_name, FILE_APPEND);
+			myFile.println("START RECORD");
+			myFile.println("No,SensorValue");
+			myFile.close();
+			Serial.println("setup Done");
 
   	while (!SD.begin(5)) {
-        	if(SD.begin(5)){
-                myFile = SD.open(file_name, FILE_APPEND);
-                myFile.println("START RECORD");
-                myFile.println("No,SensorValue");
-                myFile.close();
-                Serial.println("setup Done");
-         }else{
-                Serial.println("ERROR");
-               }
+				Serial.println("ERROR");
               }
 }
 

@@ -1,9 +1,6 @@
-#define LORA_RECV_RecvData 100
 #define LORA_RX 16
 #define LORA_TX 17
 
-String dstId = "00010001";  /*送信相手の番号*/
-const int maxSendTimes = 10; /*最大送信回数*/
 const int setCmdDelay = 100; /*待機時間*/
 
 
@@ -11,14 +8,11 @@ void setup() {
   Serial.begin(115200);
   Serial2.begin(115200, SERIAL_8N1, LORA_RX, LORA_TX);
   loraInit();
-  
-  String sendData = "";
-  for (int i = 1; i <= maxSendTimes; i++) {
-    Serial2.print("ONJUKU LOVE\r\n"); 
-  }
 }
 
 void loop() {
+  Serial2.print("ONJUKU LOVE\r\n"); 
+  delay(200);
 }
 void loraInit() {
   Serial.print("Start...");

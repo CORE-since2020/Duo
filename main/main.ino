@@ -16,7 +16,7 @@ const int b_time = 4100;
 /*頂点判定カウント数*/
 const int OPEN_COUNT = 200;
 /*頂点到達最大経過時間[ms]*/
-const int timeout = 11420;
+const int timeout = 11940;
 /*
 memo
 仰角ごとの頂点到達時間[s]
@@ -82,7 +82,7 @@ int servo1_init_pos = 100;
 int servo1_fin_pos = 50;
 int servo2_init_pos = 90;
 int servo2_fin_pos = 0;
-double s_press = 1006.20; //オフセット用の気圧
+double s_press = 1013.20; //オフセット用の気圧
 double acc[5]; //離床判定用の加速度格納配列
 int j = 0;  //配列ナンバリング(加速度)
 int L_judgeCounter = 0; //離床判定のカウンター

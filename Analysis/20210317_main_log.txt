@@ -1,0 +1,181 @@
+
+霳elect Mode [1.terminal or 2.processor]
+1
+OK
+
+
+ Software Version : VER 1.20
+
+ Configuration Mode
+------------------------------------------
+ a. node        select Coordinator or EndDevice
+ b. bw          select Band Width
+ c. sf          set Spreading Factor
+ d. channel     set channel
+ e. panid       set PAN ID
+ f. ownid       set Own Node ID
+ g. dstid       set Destination ID
+ l. ack         set Acknowledge Mode
+ m. retry       set send retry count
+ n. transmode   select Transfer Mode
+ o. rcvid       set received Node ID information
+ p. rssi        set RSSI information
+ q. operation   select Configuration or Operation
+ r. baudrate    select UART baudrate
+ s. sleep       select Sleep Mode
+ t. sleeptime   set Sleep Wakeup Timer value
+ u. power       set Output Power
+ v. version     software version
+ w. save        save parameters
+ x. load        load default parameters
+ y. show        show parameters
+ z. start       Transite Operation
+ A. format      set Data Format
+ B. sendtime    set test send interval
+ C. senddata    set test send data
+ D. aeskey      set AES Key
+ ?. help        help
+
+LORA > show
+
+  configuration setting is below.
+  -------------------------------------
+  Node                        : Coordinator
+  Band Width                  : 125kHz
+  Spreading Factor            : 7
+  Effective Bitrate           : 5469bps
+  Channel                     : 1
+  PAN ID                      : 0001
+  Own Node ID                 : 0000
+  Destination ID              : 0001
+  Acknowledge                 : ON
+  Retry count                 : 3
+  Transfer Mode               : Payload
+  Receive Node ID information : OFF
+  RSSI information            : OFF
+  Config/Operation            : Configuration
+  UART baudrate               : 115200
+  Sleep Mode                  : No Sleep
+  Sleep Time                  : 50
+  Output Power                : 13dBm
+  Format                      : ASCII
+  Send Time                   : 0
+  Send Data                   :
+  AES Key                     : 00000000000000000000000000000000
+
+LORA > z
+OK
+
+ ----- operation mode is ready -----
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 01]
+Receive Data(2)
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 0A]
+Receive Data(ownid 0001)
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 01]
+Receive Data(w)
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 0E]
+Receive Data(Hello! Hibari1)
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 21]
+Receive Data(STANDBY ACC:1.03[G] ALT:221.40[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:0.96[G] ALT:52.50[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.14[G] ALT:94.14[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.17[G] ALT:69.29[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.13[G] ALT:34.70[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.13[G] ALT:37.46[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.15[G] ALT:46.03[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.16[G] ALT:51.65[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.07[G] ALT:46.71[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.15[G] ALT:37.26[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.14[G] ALT:37.05[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.14[G] ALT:30.66[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:0.86[G] ALT:16.59[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:0.85[G] ALT:31.95[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:0.87[G] ALT:30.85[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:0.86[G] ALT:33.40[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:0.86[G] ALT:34.02[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.10[G] ALT:78.31[m])
+8
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 01]
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.10[G] ALT:36.50[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.11[G] ALT:31.22[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.10[G] ALT:32.87[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.10[G] ALT:32.72[m])
+info
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 04]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 20]
+Receive Data(STANDBY ACC:1.10[G] ALT:31.62[m])
+flight
+<-- send data info[panid = 0001, srcid = 0000, dstid = 0001, length = 06]
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 0C]
+Receive Data(FLIGHT_MODE!)
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 0C]
+Receive Data(BURNING TIME)
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 06]
+Receive Data(RISING)
+--> receive data info[panid = 0001, srcid = 0001, dstid = 0000, length = 0F]
+Receive Data(Open by timeout)

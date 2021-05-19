@@ -2,6 +2,8 @@
 
 const int LORA_RX = 16;
 const int LORA_TX = 17;
+const int GPS_RX = 26;
+const int GPS_TX = 27;
 
 void loraInit();
 void clearBuffer();
@@ -18,7 +20,7 @@ void setup() {
   delay(100);
 
   /*GNSSモジュールとのシリアル通信の初期化*/
-  Serial.begin(115200); //事前にボーレートを115200bpsに変更しておく
+  Serial1.begin(115200, SERIAL_8N1, GPS_RX, GPS_TX); //事前にボーレートを115200bpsに変更しておく
   gpsInit();
   
   Serial2.print("SET UP DONE...READY\r\n");
@@ -28,13 +30,14 @@ void setup() {
 }
 
 void loop() {
-  while (Serial.available() > 0){
-    char c = Serial.read();
+  while (Serial1.available() > 0){
+    char c = Serial1.read();
     gps.encode(c);
     if (gps.location.isUpdated()){
-      Serial2.print("LAT="); Serial2.print(gps.location.lat(), 6);  Serial2.print("\r\n");
-      Serial2.print("LONG="); Serial2.print(gps.location.lng(), 6); Serial2.print("\r\n");
-      Serial2.print("ALT="); Serial2.print(gps.altitude.meters());  Serial2.print("\r\n");
+      Serial2.print(gps.time.value());  Serial2.print(",");
+      Serial2.print(gps.location.lat(), 6);  Serial2.print(",");
+      Serial2.print(gps.location.lng(), 6); Serial2.print(",");
+      Serial2.print(gps.altitude.meters());  Serial2.print("\r\n");
     }
   }
 }
@@ -61,8 +64,8 @@ void clearBuffer(){
 }
 
 void gpsInit(){
-  Serial.print("$PMTK220,100*2F\r\n");  //サンプリングレートを10[Hz]に変更
+  Serial1.print("$PMTK220,100*2F\r\n");  //サンプリングレートを1[Hz]に変更
   delay(100);
-  Serial.print("$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n");  //GPRMCとGPGGAセンテンスのみ受信
+  Serial1.print("$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n");  //GPRMCとGPGGAセンテンスのみ受信
   delay(100);
 }

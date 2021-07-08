@@ -1,8 +1,9 @@
-#include "bme280.h"
 #include <SD.h>
+#include "bme280.h"
 
 #define ALT_LIMIT 10  //[m]
 #define VELOCITY_LIMIT 15 //[m/s]
+#define INTERVAL_TIME 5000  //[ms]
 
 bme280 bme(21, 22);
 
@@ -11,21 +12,25 @@ double P0;
 double alt = 0.0;
 double v;
 double t = 0.0;
-//double t0, t1;
-int reset_cnt = 0;
+double t0;
+int button_cnt = 0;
+int cnt = 0;
+int reset_t = 1;
 int judge_cnt = 0;
 const double a = 0.237;
 const int SR1 = 200;
 const int SR2 = 100;
-const char* f_name = "/test-alt.csv";
-File sd;
+const char* f_name1 = "/test-alt4.csv";
+File sd1;
 
-/*タイマー割込み処理関係の変数*/
+/*タイマー割込み処理(判定)関係の変数*/
 volatile int timeCounter1;
-volatile int timeCounter2;
 hw_timer_t *timer1 = NULL;
-hw_timer_t *timer2 = NULL;
 portMUX_TYPE timerMux1 = portMUX_INITIALIZER_UNLOCKED;
+
+/*タイマー割込み処理(記録)関係の変数*/
+volatile int timeCounter2;
+hw_timer_t *timer2 = NULL;
 portMUX_TYPE timerMux2 = portMUX_INITIALIZER_UNLOCKED;
 
 /*関数*/
@@ -36,27 +41,24 @@ void IRAM_ATTR onTimer1();
 void IRAM_ATTR onTimer2();
 
 void setup() {
-  
   /*シリアル通信初期化*/
   Serial.begin(115200);
-
   /*SD初期化*/
   Serial.print("Initializing SD card...");
   if (!SD.begin(5)) {
     Serial.println("initialization failed!");
     exit(1);
   }
-  sd = SD.open("/test-alt.csv", FILE_APPEND);
-  if(sd){
-    sd.println("TIME, ALT, V_Z");
+  sd1 = SD.open(f_name1, FILE_APPEND);
+  if(sd1){
+    sd1.println("TIME, ALT, TEMP");
   }else{
     Serial.println("Opening file failed!");
     exit(1);
   }
-  sd.close();
+  sd1.close();
   Serial.println("initialization done.");
-  
-  /*BME280初期化*/
+
   bme.setup();
   delay(500);
   Serial.println("Pressure Offsetting");
@@ -70,17 +72,30 @@ void setup() {
   P0 = median(p_off, 100);
   Serial.print(P0);
   Serial.println("[hPa]");
-  
-  /*タイマー割込み処理初期化*/
-  timer1 = timerBegin(0, 80, true);
-  timerAttachInterrupt(timer1, &onTimer1, true);
-  timerAlarmWrite(timer1, 1.0E6 / SR1, true);
-  timerAlarmEnable(timer1);
-  sd = SD.open(f_name, FILE_APPEND);
+  while(button_cnt < 5){
+    if(digitalRead(13) == 1){
+      button_cnt++;
+    }
+  }
+  Serial.println("Released...");
+
+  /*タイマー割込み処理初期化(記録)*/
+  sd1 = SD.open(f_name1, FILE_APPEND);
   timer2 = timerBegin(1, 80, true);
   timerAttachInterrupt(timer2, &onTimer2, true);
-  timerAlarmWrite(timer2, 1.0E6 / SR2, true);
+  timerAlarmWrite(timer2, 1.0E06 / (double)SR2, true);
   timerAlarmEnable(timer2);
+
+  //delay(INTERVAL_TIME);
+  Serial.println("Start judgement");
+  
+  /*タイマー割込み処理初期化(判定)*/
+  
+  timer1 = timerBegin(0, 80, true);
+  timerAttachInterrupt(timer1, &onTimer1, true);
+  timerAlarmWrite(timer1, 1.0E6 / (double)SR1, true);
+  timerAlarmEnable(timer1);
+  
 }
 
 void loop() {
@@ -89,12 +104,12 @@ void loop() {
     portENTER_CRITICAL(&timerMux1);
     timeCounter1--;
     portEXIT_CRITICAL(&timerMux1);
-    /*以下割込み処理(判定)*/
+    
     double data[3];
     double alt2;
     bme.getValue(data);
     alt2 = a * alt + (1 - a) * calc_altitude(P0, data[0], data[1]);  //RCフィルター
-    v = (alt2 - alt) / 0.1;
+    v = (alt2 - alt) / 0.01;
     alt = alt2;
   }
   if(timeCounter2 > 0){
@@ -102,25 +117,26 @@ void loop() {
     timeCounter2--;
     portEXIT_CRITICAL(&timerMux2);
     /*以下割込み処理(記録)*/
-    //t0 = millis();
+    if(cnt == 0){
+      t0 =millis();
+      cnt++;
+    }else{
+      t = (millis() - t0) * 0.001;
+    }
     double data[3];
     bme.getValue(data);
-    t += 1 / (double)SR2;
-    sd = SD.open(f_name, FILE_APPEND);
-    if(sd){
-      sd.print(t);  sd.print(",");  sd.print(data[0]);  sd.print(",");  sd.println(data[1]);
+    if(sd1){
+      sd1.print(t);  sd1.print(",");  sd1.print(data[0]);  sd1.print(",");  sd1.println(data[1]);
     }
-    reset_cnt++;
-    if(reset_cnt >= 100){
-      /*1秒に一回書き込みをclose*/
-      sd.close();
-      sd = SD.open(f_name, FILE_APPEND);
-      reset_cnt = 0;  
-    }
-    //t1 = millis();
-    
   }
   noInterrupts();
+  if(t>=reset_t){
+    sd1.close();
+    sd1 = SD.open(f_name1, FILE_APPEND);
+    reset_t++; 
+  }
+
+  /*
   if((alt > ALT_LIMIT) && (v < VELOCITY_LIMIT)){
       judge_cnt++;
   }else{
@@ -128,8 +144,16 @@ void loop() {
   }
   if(judge_cnt > 50){
     Serial.println("Sky swimming!");
+    sd2 = SD.open(f_name2, FILE_APPEND);
+    if(sd2){
+      sd2.println("Sky swimming!");
+      sd2.print("time:"); sd2.print(t); sd2.println("[s]");
+    }
+    sd2.close();
     timerEnd(timer1);
   }
+  */
+  
 }
 
 double calc_altitude(double pres_offset, double pres, double temp){

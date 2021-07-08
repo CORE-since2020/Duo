@@ -11,7 +11,7 @@ bme280 bme(21, 22);
 double P0;
 double alt = 0.0;
 double v;
-double t = 0.0;
+double t = 0.0; 
 double t0;
 int button_cnt = 0;
 int cnt = 0;
@@ -20,7 +20,7 @@ int judge_cnt = 0;
 const double a = 0.237;
 const int SR1 = 200;
 const int SR2 = 100;
-const char* f_name1 = "/test-alt4.csv";
+const char* f_name1 = "/test-alt.csv";
 File sd1;
 
 /*タイマー割込み処理(判定)関係の変数*/
@@ -58,7 +58,8 @@ void setup() {
   }
   sd1.close();
   Serial.println("initialization done.");
-
+  
+  /*BME280セットアップ*/
   bme.setup();
   delay(500);
   Serial.println("Pressure Offsetting");
@@ -86,11 +87,11 @@ void setup() {
   timerAlarmWrite(timer2, 1.0E06 / (double)SR2, true);
   timerAlarmEnable(timer2);
 
-  //delay(INTERVAL_TIME);
+  delay(INTERVAL_TIME);
+  
   Serial.println("Start judgement");
   
   /*タイマー割込み処理初期化(判定)*/
-  
   timer1 = timerBegin(0, 80, true);
   timerAttachInterrupt(timer1, &onTimer1, true);
   timerAlarmWrite(timer1, 1.0E6 / (double)SR1, true);
@@ -104,7 +105,7 @@ void loop() {
     portENTER_CRITICAL(&timerMux1);
     timeCounter1--;
     portEXIT_CRITICAL(&timerMux1);
-    
+    /*以下割込み処理(判定)*/
     double data[3];
     double alt2;
     bme.getValue(data);

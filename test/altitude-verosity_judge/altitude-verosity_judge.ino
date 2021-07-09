@@ -1,7 +1,7 @@
 #include <SD.h>
 #include "bme280.h"
 
-#define ALT_LIMIT 10  //[m]
+#define ALT_LIMIT 30  //[m]
 #define VELOCITY_LIMIT 15 //[m/s]
 #define INTERVAL_TIME 5000  //[ms]
 
@@ -136,8 +136,7 @@ void loop() {
     sd1 = SD.open(f_name1, FILE_APPEND);
     reset_t++; 
   }
-
-  /*
+  
   if((alt > ALT_LIMIT) && (v < VELOCITY_LIMIT)){
       judge_cnt++;
   }else{
@@ -145,15 +144,8 @@ void loop() {
   }
   if(judge_cnt > 50){
     Serial.println("Sky swimming!");
-    sd2 = SD.open(f_name2, FILE_APPEND);
-    if(sd2){
-      sd2.println("Sky swimming!");
-      sd2.print("time:"); sd2.print(t); sd2.println("[s]");
-    }
-    sd2.close();
     timerEnd(timer1);
   }
-  */
   
 }
 
